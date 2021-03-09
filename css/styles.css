@@ -122,3 +122,30 @@ body {
   .cart {
     color: #FFF;
   }
+
+  .burger {
+    margin: 50px auto;
+  }
+
+  .burger__title {
+    font-size: 36px;
+    color: #FFF;
+    text-align: center;
+  }
+
+  .burger-form {
+    width: 75%;
+    margin: 0 auto;
+    margin-top: 50px;
+    padding: 25px;
+    background-color: #FFF;
+  }
+
+  fieldset {
+    margin: 25px 0;
+    padding: 10px;
+  }
+
+  .burger-form__legend {
+    padding: 10px;
+  }
