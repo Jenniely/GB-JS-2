@@ -142,7 +142,7 @@ class Good {
 class Api {
 
     constructor() {
-        this.url = "../goods.json";
+        this.url = "./goods.json";
     }
 
     fetch(error, success) {
