@@ -23,7 +23,6 @@ class Form {
         e.target.classList.remove('warning');
         const { target: { name, value } } = e;
         this.formData[name] = value;
-        console.log( this.formData[name]);
     }
 
     handleSubmit(e) {
@@ -38,7 +37,6 @@ class Form {
         let pass = true;
 
         Object.keys(patterns).forEach((key, index) => {
-            console.log(patterns[key], this.formData[key]);
             if (patterns[key].exec(this.formData[key]) === null) {
                 this.inputs[index].classList.add('warning');
                 this.errors[index].classList.remove('hidden');
