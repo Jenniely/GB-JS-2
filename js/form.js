@@ -1,6 +1,7 @@
 const str = "He said 'I'll never forget you.' It was the best moment of my life. Yogi Berra famously said, 'A nickel ain't worth a dime anymore.' ";
 const regex = /\s[']|[']\s|[']$/g;
 const newStr = str.replace(regex, '"');
+console.log(newStr);
 
 class Form {
     constructor() {
