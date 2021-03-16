@@ -4,24 +4,33 @@ class Cart {
         this.container = document.querySelector('.cart__item-list');
         this.items = [];
         this.totalContainer = document.querySelector('.cart__total');
+        this.header = new Header();
+
+        this.header.setButtonHandler((event) => {
+            this.toggleCart(event);
+        })
+
     }
 
     showCart() {
         let cartContainer = document.querySelector('.cart');
+        let button = document.querySelector('.header__cart-show');
         cartContainer.classList.remove('hidden');
-        cartShowButton.innerText = 'Hide cart';
+        button.innerText = 'Hide cart';
     }
 
     hideCart() {
         let cartContainer = document.querySelector('.cart');
+        let button = document.querySelector('.header__cart-show');
         cartContainer.classList.add('hidden');
-        cartShowButton.innerText = 'Show cart'
+        button.innerText = 'Show cart'
     }
 
     toggleCart(event) {
         let cartContainer = document.querySelector('.cart');
         cartContainer.classList.toggle('hidden');
         cartContainer.classList.contains('hidden') ? event.target.innerText = 'Show cart' : event.target.innerText = 'Hide cart';
+        this.render();
     }
 
     getTotal() {
@@ -182,12 +191,33 @@ class Api {
     }
 }
 
+class Header {
+    constructor() {
+        this.search = document.querySelector('.header__search');
+        this.button = document.querySelector('.header__cart-show');
+    }
+
+    setSearchHandler(callback) {
+        this.search.addEventListener('input', callback);
+    }
+
+    setButtonHandler(callback) {
+        this.button.addEventListener('click', callback);
+    }
+}
+
 class GoodsList {
 
     constructor() {
         this.api = new Api();
+        this.header = new Header();
         this.container = document.querySelector('.shop__item-list');
         this.goods = [];
+        this.filteredGoods = [];
+
+        this.header.setSearchHandler((event) => {
+            this.search(event.target.value);
+        })
 
         this.api.fetchPromise()
             .then((response) => this.api.fromJSON(response))
@@ -197,11 +227,12 @@ class GoodsList {
 
     onFetchSuccess(data) {
         this.goods = data.map(({ id, title, price, img }) => new Good(id, title, price, img));
+        this.filteredGoods = this.goods;
         this.render();
     }
 
     onFetchError(err) {
-        this.container.insertAdjacentHTML('beforeend', '<h3>${err}</h3>')
+        this.container.insertAdjacentHTML('beforeend', `<h3>${err}</h3>`)
     }
 
     getTotal() {
@@ -211,20 +242,25 @@ class GoodsList {
         )
     };
 
+    search(str) {
+        if(str === '') {
+          this.filteredGoods = this.goods;
+        }
+        const regexp = new RegExp(str, 'gi');
+        this.filteredGoods = this.goods.filter((good) => regexp.test(good.title));
+        this.render();
+      }
+
+
     render() {
         this.container.textContent = '';
-        this.goods.forEach(
+        this.filteredGoods.forEach(
             good => this.container.insertAdjacentHTML('beforeend', good.getHtml())
         )
 
         let buttons = document.querySelectorAll('.shop__add-button');
-        buttons.forEach(button => button.addEventListener('click', (e) => cartInstance.addToCart(e.target.value)));
+        buttons.forEach(button => button.addEventListener('click', (e) =>  cartInstance.addToCart(e.target.value)));
     }
 }
-
 const cartInstance = new Cart;
-cartInstance.render();
 const list = new GoodsList;
-const cartShowButton = document.querySelector('.shop__cart-show');
-cartShowButton.addEventListener('click', (event) => cartInstance.toggleCart(event));
-
