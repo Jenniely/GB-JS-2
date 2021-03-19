@@ -51,7 +51,7 @@ class Cart {
         this.items.forEach(
             item => {
                 this.container.insertAdjacentHTML('beforeend', item.getHtml());
-        }
+            }
         )
         let incButtons = document.querySelectorAll('.cart-item__inc ');
         incButtons.forEach(button => button.addEventListener('click', (e) => this.addToCart(e.target.value)));
@@ -81,17 +81,17 @@ class Cart {
     decrement(idToDec) {
         idToDec = parseInt(idToDec);
         try {
-        let index = this.items.findIndex(item => item.id === idToDec);
-        this.items[index].quantity--;
+            let index = this.items.findIndex(item => item.id === idToDec);
+            this.items[index].quantity--;
 
-        if(this.items[index].quantity === 0) {
-            this.delFromCart(idToDec)
-        }
-        this.render();
+            if (this.items[index].quantity === 0) {
+                this.delFromCart(idToDec)
+            }
+            this.render();
         } catch (error) {
             console.log(error);
         }
-     }
+    }
 
     delFromCart(idToDel) {
         idToDel = parseInt(idToDel);
@@ -243,13 +243,13 @@ class GoodsList {
     };
 
     search(str) {
-        if(str === '') {
-          this.filteredGoods = this.goods;
+        if (str === '') {
+            this.filteredGoods = this.goods;
         }
         const regexp = new RegExp(str, 'gi');
         this.filteredGoods = this.goods.filter((good) => regexp.test(good.title));
         this.render();
-      }
+    }
 
 
     render() {
@@ -259,8 +259,26 @@ class GoodsList {
         )
 
         let buttons = document.querySelectorAll('.shop__add-button');
-        buttons.forEach(button => button.addEventListener('click', (e) =>  cartInstance.addToCart(e.target.value)));
+        buttons.forEach(button => button.addEventListener('click', (e) => cartInstance.addToCart(e.target.value)));
     }
 }
 const cartInstance = new Cart;
 const list = new GoodsList;
+const app = new Vue({
+    el: '#app',
+    data: {
+        searchLine: '',
+        isVisibleCart: false,
+        goods: [
+            { "id": 1, "title": "Shirt", "price": 150, "img": "./img/man.jpg" },
+            { "id": 2, "title": "Socks", "price": 50, "img": "./img/man.jpg" },
+            { "id": 3, "title": "Jacket", "price": 350, "img": "./img/man.jpg" },
+            { "id": 4, "title": "Shoes", "price": 250, "img": "./img/man.jpg" }
+        ]
+    },
+    methods: {
+        add() {
+            this.goods.push();
+        }
+    }
+});
