@@ -1,5 +1,5 @@
 body {
-    min-height: 100vh;
+    min-height: 100%;
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(to bottom, #323232 0%, #3F3F3F 40%, #1C1C1C 150%), linear-gradient(to top, rgba(255,255,255,0.40) 0%, rgba(0,0,0,0.25) 200%);
  background-blend-mode: multiply;
@@ -121,6 +121,20 @@ body {
 
   .cart {
     color: #FFF;
+    max-width: 1440px;
+    margin: 0 auto;
+    margin-top: 50px;
+  }
+
+  .cart__title {
+    font-size: 28px;
+  color: #FFF;
+  text-align: center;
+  }
+
+  .cart__empty {
+    text-align: center;
+    padding: 25px;
   }
 
   .burger {
@@ -148,4 +162,29 @@ body {
 
   .burger-form__legend {
     padding: 10px;
+  }
+
+  .cart-item {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+    background-color: #FFF;
+    color: #323232;
+    padding: 0 20px;
+    margin: 10px 0;
+  }
+
+  .cart-item__thumb {
+    width: 70px;
+    object-fit: cover;
+  }
+
+  .cart-item__title {
+    width: 50%;
+  }
+
+  .cart__total {
+    text-align: right;
   }

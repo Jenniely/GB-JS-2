@@ -73,7 +73,7 @@ class Burger {
         const renderFillings = new RenderOption(this.fillings, 'checkbox', 'fillings');
         const renderAdditions = new RenderOption(this.additions, 'checkbox', 'additions');
 
-        let formHtml = `${renderSize.getHtml()} ${renderFillings.getHtml()} ${renderAdditions.getHtml()} <p class="burger__price "> </p><p class="burger__nutrition"> </p>`;
+        let formHtml = `${renderSize.getHtml()} ${renderFillings.getHtml()} ${renderAdditions.getHtml()} <p class="burger__price"> </p><p class="burger__nutrition"> </p>`;
         this.container.insertAdjacentHTML('beforeend', formHtml);
         let inputs = document.querySelectorAll('.burger-form__select');
         inputs.forEach(input => input.addEventListener('change', handleChange));
