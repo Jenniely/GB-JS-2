@@ -1,9 +1,59 @@
 const API_URL = "./goods.json";
 
+Vue.component('search', {
+    template: '<input type="text" v-model="searchLine" @input="emitInput" class="header__search" id="search"></input>',
+    data() {
+        return {
+            searchLine: ''
+        }
+    },
+    methods: {
+        emitInput() {
+            this.$emit('search-input', this.searchLine);
+        }
+    }
+})
+
+Vue.component('cart-component', {
+    template: '<div><h2 class="cart__title">Cart</h2><ul class="cart__item-list"><slot></slot></ul><p class="cart__total">{{total}}</p></div>',
+    props: ['total'],
+})
+
+Vue.component('empty', {
+    template: '<p class="cart__empty">Нет товаров</p>'
+})
+
+Vue.component('add-btn', {
+    template: '<button @click="emitAdd" class="shop__add-button btn">Add to cart</button>',
+    methods: {
+        emitAdd() {
+            this.$emit('add-to-cart');
+        }
+    }
+})
+
+Vue.component('shop-item', {
+    template: '<li class="shop__item"><div class="shop__content"><img :src="img"><h3 class="shop__content-title">{{title}}</h3><p class="shop__content-price">${{price}}</p><slot></slot> </div></li>',
+    props: ['id', 'title', 'price', 'img']
+})
+
+Vue.component('cart-item', {
+    template: '<li class="cart-item"><img class="cart-item__thumb" :src="img"><h3 class="cart-item__title">{{title}}</h3><p class="cart-item__price">{{price}}</p><p class="cart-item__quantity">{{quantity}}</p><button class="cart-item__inc" @click="emitInc">+</button><button class="cart-item__dec" @click="emitDec">-</button></li>',
+    props: ['id', 'title', 'price', 'img', 'quantity'],
+    methods: {
+        emitInc() {
+            this.$emit('inc');
+        },
+
+        emitDec() {
+            this.$emit('dec');
+        }
+    }
+})
+
 const app = new Vue({
     el: '#app',
     data: {
-        searchLine: '',
         isVisibleCart: false,
         goods: [],
         filteredGoods: [],
@@ -11,17 +61,27 @@ const app = new Vue({
     },
     methods: {
 
-        searchHandler() {
-            if (this.searchLine === '') {
+        searchHandler(line) {
+            if (line === '') {
                 this.filteredGoods = this.goods;
             }
-            const regexp = new RegExp(this.searchLine, 'gi');
+            const regexp = new RegExp(line, 'gi');
             this.filteredGoods = this.goods.filter((good) => regexp.test(good.title));
         },
 
         addToCart(id) {
 
-            this.cart.push(this.filteredGoods.find(good => good.id === id));
+           if (this.cart.some(good => good.id === id)) {
+
+                this.increment(id);
+
+            } else { 
+
+                let item = this.filteredGoods.find(good => good.id === id);
+            item.quantity = 1;
+            this.cart.push(item);
+
+            }
 
         },
 
@@ -29,33 +89,29 @@ const app = new Vue({
             const goodIndex = this.cart.findIndex((item) => item.id == id);
             this.cart.splice(goodIndex, 1);
         },
-//TODO:
-/*         increment(id) {
-            const goodIndex = this.cart.findIndex((item) => item.id == id);
-            Vue.set(this.cart[goodIndex], 'quantity', quantity + 1 );
-            console.log(this.cart[goodIndex].quantity);
-        }, 
 
-        decrement(id) {
-            const goodIndex = this.cart.findIndex((item) => item.id == id);
-            Vue.set(this.cart[goodIndex], 'quantity', quantity - 1 );
-            console.log(this.cart[goodIndex].quantity);
-
-            if (this.cart[index].quantity === 0) {
-                this.removeFromCart(id);
-            }
-        },  */
-
+ 
         toggleCart() {
             this.isVisibleCart = !this.isVisibleCart;
         },
 
-        getCartTotal() {
-            return this.cart.reduce(
-                (accumulator, item) => accumulator + item.price,
-                0
-            )
-        },
+        increment(id) {
+            const goodIndex = this.cart.findIndex((item) => item.id == id);
+            let newValue = this.cart[goodIndex];
+            newValue.quantity ++;
+            Vue.set(this.cart, goodIndex, newValue);
+        }, 
+
+        decrement(id) {
+            const goodIndex = this.cart.findIndex((item) => item.id == id);
+            let newValue = this.cart[goodIndex];
+            newValue.quantity --;
+            Vue.set(this.cart, goodIndex, newValue);
+
+            if (this.cart[goodIndex].quantity === 0) {
+                this.removeFromCart(id);
+            }
+        }, 
 
         fetch(error, success) {
 
@@ -88,6 +144,15 @@ const app = new Vue({
         },
 
 
+    },
+
+    computed: {
+        getCartTotal: function() {
+            return this.cart.reduce(
+                (accumulator, item) => accumulator + item.price * item.quantity,
+                0
+            )
+        },
     },
 
     mounted() {

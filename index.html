@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,53 +8,55 @@
     <link rel="stylesheet" href="./css/reset.css">
     <link rel="stylesheet" href="./css/styles.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <title>Javascript 2</title>
 </head>
+
 <body>
     <div id="app">
         <header class="header container">
-            <input type="text" class="header__search" id="search" v-model="searchLine" v-on:input="searchHandler">
+            <search @search-input="searchHandler($event)"></search>
             <button v-on:click="toggleCart()" class="header__cart-show btn">Cart ({{cart.length}})</button>
         </header>
         <main>
             <section v-if="isVisibleCart" class="cart container">
-                <h2 class="cart__title">Cart</h2>
-                <p v-if="cart.length === 0" class="cart__empty">Корзина пуста</p>
-                <ul class="cart__item-list">
-                    <li class="cart-item" v-if="cart.length != 0"  v-for="item in cart">
-                        <img class="cart-item__thumb" :src="item.img">
-        <h3 class="cart-item__title">{{item.title}}</h3>
-        <p class="cart-item__price">{{item.price}}</p>
-        <p class="cart-item__quantity">{{item.quantity}}</p>
-
-<!--    TODO:     <button class="cart-item__inc" v-on:click="increment(item.id)">+</button>
-        <button class="cart-item__dec" v-on:click="decrement(item.id)">-</button> -->
-    
-                    </li>
-                </ul>
-                <p class="cart__total">{{getCartTotal()}}</p>
+                <cart-component v-bind:total="getCartTotal">
+                    <empty v-if="this.cart.length === 0"></empty>
+                    <cart-item 
+                    v-for="item in cart" 
+                    v-bind:key="item.id" 
+                    v-bind:id="item.id" 
+                    v-bind:title="item.title"
+                    v-bind:price="item.price" 
+                    v-bind:img="item.img" 
+                    v-bind:quantity="item.quantity"
+                    @inc="increment(item.id)"
+                    @dec="decrement(item.id)"></cart-item>
+                </cart-component>
             </section>
             <section class="shop container">
                 <h2 class="shop__title">Shop</h2>
                 <ul class="shop__item-list">
-                    <p v-if="filteredGoods.length === 0" class="cart__empty">Товаров не найдено</p>
-                    <li v-if="filteredGoods.length != 0" class="shop__item" v-for="good in filteredGoods">
-                        <div class="shop__content">
-                        <img :src="good.img">
-                        <h3 class="shop__content-title">{{good.title}}</h3>
-                        <p class="shop__content-price">{{good.price}}</p>
-                        <button class="shop__add-button btn" v-on:click="addToCart(good.id)">Add to cart</button>
-                        </div>
-                        </li>
+                    <empty v-if="filteredGoods.length === 0"></empty>
+                    <shop-item 
+                    v-for="good in filteredGoods" 
+                    v-bind:key="good.id" 
+                    v-bind:id="good.id"
+                    v-bind:title="good.title" 
+                    v-bind:price="good.price"
+                    v-bind:img="good.img"
+                    @click='addToCart(good.id)'>
+                        <add-btn v-bind:id="good.id" @add-to-cart="addToCart(good.id)"></add-btn>
+                    </shop-item>
                 </ul>
             </section>
         </main>
-        <footer  class="footer">
-    
+        <footer class="footer">
+
         </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
     <script src="./js/v-script.js"></script>
 </body>
+
 </html>
