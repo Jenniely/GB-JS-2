@@ -11,27 +11,49 @@
     <title>Javascript 2</title>
 </head>
 <body>
-    <header class="header container">
-        <input type="text" class="header__search" id="search">
-        <button class="header__cart-show btn">Show cart</button>
-    </header>
-    <main>
-        <section class="cart container hidden">
-            <h2 class="cart__title">Cart</h2>
-            <p class="cart__empty hidden">Корзина пуста</p>
-            <ul class="cart__item-list">
-            </ul>
-            <p class="cart__total"></p>
-        </section>
-        <section class="shop container">
-            <h2 class="shop__title">Shop</h2>
-            <ul class="shop__item-list">
-            </ul>
-        </section>
-    </main>
-    <footer  class="footer">
+    <div id="app">
+        <header class="header container">
+            <input type="text" class="header__search" id="search" v-model="searchLine" v-on:input="searchHandler">
+            <button v-on:click="toggleCart()" class="header__cart-show btn">Cart ({{cart.length}})</button>
+        </header>
+        <main>
+            <section v-if="isVisibleCart" class="cart container">
+                <h2 class="cart__title">Cart</h2>
+                <p v-if="cart.length === 0" class="cart__empty">Корзина пуста</p>
+                <ul class="cart__item-list">
+                    <li class="cart-item" v-if="cart.length != 0"  v-for="item in cart">
+                        <img class="cart-item__thumb" :src="item.img">
+        <h3 class="cart-item__title">{{item.title}}</h3>
+        <p class="cart-item__price">{{item.price}}</p>
+        <p class="cart-item__quantity">{{item.quantity}}</p>
 
-    </footer>
-    <script src="./js/script.js"></script>
+<!--    TODO:     <button class="cart-item__inc" v-on:click="increment(item.id)">+</button>
+        <button class="cart-item__dec" v-on:click="decrement(item.id)">-</button> -->
+    
+                    </li>
+                </ul>
+                <p class="cart__total">{{getCartTotal()}}</p>
+            </section>
+            <section class="shop container">
+                <h2 class="shop__title">Shop</h2>
+                <ul class="shop__item-list">
+                    <p v-if="filteredGoods.length === 0" class="cart__empty">Товаров не найдено</p>
+                    <li v-if="filteredGoods.length != 0" class="shop__item" v-for="good in filteredGoods">
+                        <div class="shop__content">
+                        <img :src="good.img">
+                        <h3 class="shop__content-title">{{good.title}}</h3>
+                        <p class="shop__content-price">{{good.price}}</p>
+                        <button class="shop__add-button btn" v-on:click="addToCart(good.id)">Add to cart</button>
+                        </div>
+                        </li>
+                </ul>
+            </section>
+        </main>
+        <footer  class="footer">
+    
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script src="./js/v-script.js"></script>
 </body>
 </html>
