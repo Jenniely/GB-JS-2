@@ -11,8 +11,10 @@ body {
 
 .shop {
     margin: 0 auto;
-    margin-top: 150px;
+    margin-top: 50px;
     max-width: 1440px;
+    display: flex;
+    flex-direction: column;
 }
 
 .shop__title {
@@ -91,4 +93,59 @@ body {
 
   .hidden {
     display: none;
+  }
+
+  .btn {
+    padding: 8px 12px;
+    margin: 5px;
+    background-color: #273c75;
+    font-size: 14px;
+    color: #FFF;
+    border: none;
+    cursor: pointer;
+    transition: .3s;
+  }
+
+  .btn:hover {
+    transform: scale(1.05);
+  }
+
+  .btn:active, .btn:focus {
+    background-color: #40739e;
+    outline: none;
+  } 
+
+  .shop__cart-show {
+    margin: 25px auto;
+  }
+
+  .cart {
+    color: #FFF;
+  }
+
+  .burger {
+    margin: 50px auto;
+  }
+
+  .burger__title {
+    font-size: 36px;
+    color: #FFF;
+    text-align: center;
+  }
+
+  .burger-form {
+    width: 75%;
+    margin: 0 auto;
+    margin-top: 50px;
+    padding: 25px;
+    background-color: #FFF;
+  }
+
+  fieldset {
+    margin: 25px 0;
+    padding: 10px;
+  }
+
+  .burger-form__legend {
+    padding: 10px;
   }
