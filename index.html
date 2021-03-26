@@ -16,7 +16,7 @@
     <div id="app">
         <header class="header container">
             <search @search-input="searchHandler($event)"></search>
-            <button v-on:click="toggleCart()" class="header__cart-show btn">Cart ({{cart.length}})</button>
+            <button v-on:click="toggleCart()" class="header__cart-show btn">Cart ({{itemsInCart}})</button>
         </header>
         <main>
             <section v-if="isVisibleCart" class="cart container">
@@ -30,8 +30,8 @@
                     v-bind:price="item.price" 
                     v-bind:img="item.img" 
                     v-bind:quantity="item.quantity"
-                    @inc="increment(item.id)"
-                    @dec="decrement(item.id)"></cart-item>
+                    @add-to-cart="addToCart(item.id)"
+                    @dec="deleteFromCart(item.id)"></cart-item>
                 </cart-component>
             </section>
             <section class="shop container">
@@ -46,7 +46,7 @@
                     v-bind:price="good.price"
                     v-bind:img="good.img"
                     @click='addToCart(good.id)'>
-                        <add-btn v-bind:id="good.id" @add-to-cart="addToCart(good.id)"></add-btn>
+                        <add-btn v-bind:id="good.id" @add-to-cart="addToCart(good.id)">Add to cart</add-btn>
                     </shop-item>
                 </ul>
             </section>
