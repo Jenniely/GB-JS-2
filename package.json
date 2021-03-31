@@ -1,0 +1,23 @@
+{
+  "name": "gb-js2",
+  "version": "1.0.0",
+  "description": "learning",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jenniely/GB-JS-2.git"
+  },
+  "author": "Jenniely",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jenniely/GB-JS-2/issues"
+  },
+  "homepage": "https://github.com/Jenniely/GB-JS-2#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "lodash": "^4.17.21"
+  }
+}

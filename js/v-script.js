@@ -1,4 +1,7 @@
-const API_URL = "./goods.json";
+const API_URL_GOODS = "/goods";
+const API_URL_ADDCART = "/addToCart";
+const API_URL_CART = "/cart";
+const API_URL_DELETE = "/deleteItem";
 
 Vue.component('search', {
     template: '<input type="text" v-model="searchLine" @input="emitInput" class="header__search" id="search"></input>',
@@ -24,7 +27,7 @@ Vue.component('empty', {
 })
 
 Vue.component('add-btn', {
-    template: '<button @click="emitAdd" class="shop__add-button btn">Add to cart</button>',
+    template: '<button @click="emitAdd" class="shop__add-button btn"><slot></slot></button>',
     methods: {
         emitAdd() {
             this.$emit('add-to-cart');
@@ -42,7 +45,7 @@ Vue.component('cart-item', {
     props: ['id', 'title', 'price', 'img', 'quantity'],
     methods: {
         emitInc() {
-            this.$emit('inc');
+            this.$emit('add-to-cart');
         },
 
         emitDec() {
@@ -58,6 +61,7 @@ const app = new Vue({
         goods: [],
         filteredGoods: [],
         cart: [],
+        itemsInCart: 0,
     },
     methods: {
 
@@ -69,51 +73,49 @@ const app = new Vue({
             this.filteredGoods = this.goods.filter((good) => regexp.test(good.title));
         },
 
-        addToCart(id) {
-
-           if (this.cart.some(good => good.id === id)) {
-
-                this.increment(id);
-
-            } else { 
-
-                let item = this.filteredGoods.find(good => good.id === id);
-            item.quantity = 1;
-            this.cart.push(item);
-
-            }
-
-        },
-
-        removeFromCart(id) {
-            const goodIndex = this.cart.findIndex((item) => item.id == id);
-            this.cart.splice(goodIndex, 1);
-        },
-
- 
         toggleCart() {
+            this.getCart();
             this.isVisibleCart = !this.isVisibleCart;
         },
 
-        increment(id) {
-            const goodIndex = this.cart.findIndex((item) => item.id == id);
-            let newValue = this.cart[goodIndex];
-            newValue.quantity ++;
-            Vue.set(this.cart, goodIndex, newValue);
+        addToCart(id) {
+            let data = {'id': id}
+            this.fetchPost(data, API_URL_ADDCART);
+            this.getCart();
+        },
+
+        deleteFromCart(id) {
+            let data = {'id': id}
+            this.fetchPost(data, API_URL_DELETE);
+            this.getCart();
         }, 
 
-        decrement(id) {
-            const goodIndex = this.cart.findIndex((item) => item.id == id);
-            let newValue = this.cart[goodIndex];
-            newValue.quantity --;
-            Vue.set(this.cart, goodIndex, newValue);
+        fetchPost(data, url) {
+            data = JSON.stringify(data);
+            let xhr;
 
-            if (this.cart[goodIndex].quantity === 0) {
-                this.removeFromCart(id);
+            if (window.XMLHttpRequest) {
+                xhr = new XMLHttpRequest();
+            } else if (window / ActiveXObject) {
+                xhr = new ActiveXObject("Microsoft.XMLHTTP");
             }
-        }, 
 
-        fetch(error, success) {
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                       JSON.parse(xhr.responseText);
+                    } else if (xhr.status > 400) {
+                       console.log('Something is wrong');
+                    }
+                }
+            }
+
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+            xhr.send(data);
+        },
+
+        fetch(error, success, url) {
 
             let xhr;
 
@@ -133,17 +135,41 @@ const app = new Vue({
                 }
             }
 
-            xhr.open('GET', API_URL, true);
+            xhr.open('GET', url, true);
             xhr.send();
         },
 
-        fetchPromise() {
+        fetchPromise(url) {
             return new Promise((resolve, reject) => {
-                this.fetch(reject, resolve)
+                this.fetch(reject, resolve, url);
             })
         },
 
+        getCart() {
+            this.fetchPromise(API_URL_CART)
+            .then(data => {
+                let arr = data.map(el => el.id);
+                let newArr = [];
+                let count = 0;
+                arr.forEach(el => {
+                    count ++;
+                    if (newArr.findIndex(item => item.id === el) != -1) {
+                        let item = newArr.find(good => good.id === el);
+                        item.quantity++;
 
+                    } else {
+                        let item = this.goods.find(good => good.id === el);
+                    item.quantity = 1;
+                    newArr.push(item);
+                    }
+                });
+                this.cart = newArr;
+                this.itemsInCart = count;
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
     },
 
     computed: {
@@ -156,11 +182,13 @@ const app = new Vue({
     },
 
     mounted() {
-        this.fetchPromise()
+        this.fetchPromise(API_URL_GOODS)
         .then(data => {
             this.goods = data;
             this.filteredGoods = data;
-            console.log(this.filteredGoods);
+        })
+        .then(() => {
+            this.getCart();
         })
         .catch(err => {
             console.log(err);
